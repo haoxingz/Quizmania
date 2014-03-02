@@ -63,5 +63,30 @@ public class UserTest {
 		assertEquals(true, User.userLogin(userId,newPW, conn));
 		
 	}
+	
+	@Test 
+	/*
+	 * Test isAdministrator
+	 */
+	public void test4(){
+		AccessDB db = new AccessDB();
+		String userId1 = "Molly";
+		String userId2 = "Wei";
+		Connection conn = (Connection) db.getConnection();
+		assertEquals(false, User.isAdministrator(userId1, conn));
+		assertEquals(true, User.isAdministrator(userId2, conn));
+		
+	}
 
+	@Test 
+	/*
+	 * Test removeUser
+	 */
+	public void test5(){
+		AccessDB db = new AccessDB();
+		String userId1 = "Molly";
+		Connection conn = (Connection) db.getConnection();
+		assertEquals(true, User.removeUser(userId1, conn));
+		
+	}
 }

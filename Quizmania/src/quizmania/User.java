@@ -185,8 +185,49 @@ public class User {
 		return true;
 	}
 
+	/**
+	 * Check whether userId is administrator
+	 * @return true if is administrator; false elsewise.
+	 */
+	public static boolean isAdministrator(String userId, Connection conn){
+		Statement stmt = null;
+		ResultSet rs = null;
+		String isAd = null;
+		
+		try{
+			stmt = (Statement) conn.createStatement();
+			stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
+			rs = stmt.executeQuery("SELECT * FROM users where userId = \"" + userId + "\"");
+			while(rs.next()){
+				isAd = rs.getString("administrator");
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		if(isAd.equals("yes")){
+			return true;
+		}
+		return false;
+	}
 	
-	
+	/**
+	 * Remove userId from database
+	 * @return true if succeed; false elsewise.
+	 */
+	public static boolean removeUser(String userId, Connection conn){
+		
+		Statement stmt = null;
+		
+		try{
+			stmt = (Statement) conn.createStatement();
+			stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
+			stmt.executeUpdate("DELETE FROM users where userId = \"" + userId + "\"");
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 
 }
