@@ -6,23 +6,19 @@ import java.sql.*;
 
 public class User {
 	public static final char[] CHARS = "abcdefghijklmnopqrstuvwxyz0123456789.,-!".toCharArray();
-	private String userId;
-	private String hashedPW;
-	private Connection conn;
-	private String database = MyDBInfo.MYSQL_DATABASE_NAME;
-	private String salt;
+
 	
-	public User(String userId, String password) throws Exception{
-		this.userId = userId;
-		hashedPW = generateHashedPW(password);
-		conn = new AccessDB().getConnection();
-		if(!userExists()){
-			addUserToDB();
-		}else{
-			System.out.println("User already exists!");
-		}
+	public static boolean createUser(String userId, String password, Connection conn){
+		String salt = generateSalt().toString();
+		String hashedPW = generateHashedPW(password, salt);
+		try{
+			addUserToDB(userId, hashedPW, salt, conn);
+		}catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }	
+		return true;		
 	}
-	
 	
 	/**
 	 *Given a byte[] array, produces a hex String,
@@ -45,16 +41,14 @@ public class User {
 	 * @param password
 	 * @return encrypted result
 	 */
-	private String generateHashedPW(String password){
+	private static String generateHashedPW(String password, String salt){
 		String hashResult = null;
-		byte[] saltByte =  generateSalt();
-		salt = saltByte.toString();
         if(password == null) return null;
 		
 		try{
 			MessageDigest digest = MessageDigest.getInstance("SHA");
 			digest.update(password.getBytes());
-	        digest.update(saltByte);
+	        digest.update(salt.getBytes());
 			hashResult = hexToString(digest.digest());
 		}catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +59,7 @@ public class User {
 	
 	// Write code to add salt into password
 	
-	private byte[] generateSalt() {
+	private static byte[] generateSalt() {
         SecureRandom random = new SecureRandom();
         byte bytes[] = new byte[20];
         random.nextBytes(bytes);
@@ -76,17 +70,20 @@ public class User {
 	 * Check if userId exists in the database
 	 * @throws Exception 
 	 */
-	private boolean userExists() throws Exception{
+	public static boolean userExists(String userId, Connection conn){
 		// Write code to check whether the chosen userId has been used in the database
 		Statement stmt = null;
 		ResultSet rs;
-		stmt = (Statement) conn.createStatement();
-		stmt.executeQuery("USE " + database);
-		rs = stmt.executeQuery("SELECT * FROM users WHERE userId = \"" + userId + "\";");
-		if(rs.next()){
-			return true;
+		try{
+			stmt = (Statement) conn.createStatement();
+			stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
+			rs = stmt.executeQuery("SELECT * FROM users WHERE userId = \"" + userId + "\";");
+			if(rs.next()){
+				return true;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
 		}
-		
 		return false;
 		
 	}
@@ -95,16 +92,11 @@ public class User {
 	 * Add userId and hashed password into database
 	 * @throws SQLException 
 	 */
-	private void addUserToDB() throws SQLException{
+	private static void addUserToDB(String userId, String hashedPW, String salt, Connection conn) throws SQLException{
 		// Write cod to connect database and add user to the database
-		System.out.println("Add user to Database!");
 		Statement stmt = null;
 		stmt = (Statement) conn.createStatement();
-		stmt.executeQuery("USE " + database);
-		System.out.println("INSERT INTO users VALUES (\"" + userId + "\","+ 
-				"\"" + hashedPW +"\"," + 
-				"\"" + salt + "\"," +
-				"\""+ "no" +"\")" + ";");
+		stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
 		stmt.executeUpdate("INSERT INTO users VALUES (\"" + userId + "\","+ 
 				"\"" + hashedPW +"\"," + 
 				"\"" + salt + "\"," +
@@ -112,12 +104,21 @@ public class User {
 		
 	}
 	
-	public void promoteUserToAd() throws SQLException{
+	public static boolean promoteUserToAd(String userId, Connection conn){
 		Statement stmt = null;
+		try{
 		stmt = (Statement) conn.createStatement();
-		stmt.executeQuery("USE " + database);
+		stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
 		stmt.executeUpdate("UPDATE users set administrator = \"yes\" "
 				+ "WHERE userId = \"" + userId + "\"");
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
+	
+	
+
 
 }
