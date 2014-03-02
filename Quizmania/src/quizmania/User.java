@@ -118,6 +118,43 @@ public class User {
 		return true;
 	}
 	
+	public static boolean userLogin(String userId, String password, Connection conn){
+		Statement stmt = null;
+		ResultSet rs = null;
+		String salt = null;
+		String hashedPW = null;
+		String hashedInputPW = null;
+		
+		try{
+			stmt = (Statement) conn.createStatement();
+			stmt.executeQuery("USE " + MyDBInfo.MYSQL_DATABASE_NAME);
+			rs = stmt.executeQuery("SELECT * FROM users where userId = \"" + userId + "\"");
+			
+			while(rs.next()){
+				hashedPW = rs.getString("password");
+				salt = rs.getString("salt");
+			}
+			
+			try{
+				MessageDigest digest = MessageDigest.getInstance("SHA");
+				digest.update(password.getBytes());
+				digest.update(salt.getBytes());
+				hashedInputPW = hexToString(digest.digest());
+			}catch (Exception e) {
+			    e.printStackTrace();
+			}
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		if(hashedInputPW.equals(hashedPW)){
+			return true;
+		}
+		return false;
+	}
+
+	
 	
 
 
