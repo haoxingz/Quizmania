@@ -3,7 +3,6 @@ package quizmania;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,16 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class Login
+ * Servlet implementation class SignUp
  */
-@WebServlet(description = "Check user information for login", urlPatterns = { "/Login" })
-public class Login extends HttpServlet {
+@WebServlet(description = "Try to create a new user with the user input", urlPatterns = { "/SignUp" })
+public class SignUp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Login() {
+    public SignUp() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -40,28 +39,28 @@ public class Login extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		
+		String passwordOnce = request.getParameter("passwordOnce");
+		String passwordTwice = request.getParameter("passwordTwice");
+
 		out.println("<!DOCTYPE html>"); 
 		out.println("<head>"); 
 		out.println("<meta charset=\"UTF-8\" />"); 
 		out.println("<title>Login</title>"); 
 		out.println("</head>"); 
 		out.println("<body>"); 
-		out.println("<h1>The Login servlet has not been implemented. </h1>"); 
-		out.println("Username: " + username + "<br>");
-		out.println("Password: " + password + "<br>");
+		out.println("<h1>The SignUp servlet has not been implemented. </h1>"); 
+		out.println("Username: " + username);
+		out.println("Password: " + passwordOnce + "<br>");
+		out.println("Password: " + passwordTwice + "<br>");
 		out.println("</body>"); 
 		out.println("</html>"); 
 		
-		// TODO Consult the database whether username/password combination exists
-		// TODO If exists, redirect to profile.jsp
-//		RequestDispatcher dispatch = request.getRequestDispatcher("profile.jsp");
-//		dispatch.forward(request, response);
-		// TODO If not, redirect to the error page telling people to sign up
-//		RequestDispatcher dispatch = request.getRequestDispatcher("LoginError.html");
-//		dispatch.forward(request, response);
+		//TODO: Check if two passwords match each other. 
+		//If not, go to the wrong signup page, pass error message
 		
+		//TODO: Check if the username exists, if exists, go to the error page, pass message
+		
+		//TODO: Create user. Upon success, go to Profile.jsp
 	}
 
 }
