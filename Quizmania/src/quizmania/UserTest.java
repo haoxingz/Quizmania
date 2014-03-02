@@ -1,7 +1,10 @@
 package quizmania;
 
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
+
 import com.mysql.jdbc.Connection;
 
 public class UserTest {
@@ -40,8 +43,24 @@ public class UserTest {
 		String PW_right = "123456";
 		String PW_wrong = "12345";
 		Connection conn = (Connection) db.getConnection();
-		System.out.println(User.userLogin(userId1,PW_right, conn));
-		System.out.println(User.userLogin(userId1,PW_wrong, conn));
+		assertEquals(false, User.userLogin(userId1,PW_wrong, conn));
+		assertEquals(true, User.userLogin(userId1,PW_right, conn));
+	}
+
+	@Test 
+	/*
+	 * Test change user password
+	 */
+	public void test3(){
+		AccessDB db = new AccessDB();
+		String userId = "Molly";
+		
+		String newPW = "dog";
+		String oldPW = "Molly";
+		Connection conn = (Connection) db.getConnection();
+		User.changeUserPassword(userId, newPW, conn);
+		assertEquals(false, User.userLogin(userId,oldPW, conn));
+		assertEquals(true, User.userLogin(userId,newPW, conn));
 		
 	}
 
