@@ -13,8 +13,8 @@ public class User {
 	
 	public User(String userId, String password) throws Exception{
 		this.userId = userId;
-		//hashedPW = generateHashedPW(password);
-		hashedPW = password;
+		hashedPW = generateHashedPW(password);
+		//hashedPW = password;
 		conn = new AccessDB().getConnection();
 		if(!userExists()){
 			addUserToDB();
@@ -91,11 +91,19 @@ public class User {
 		Statement stmt = null;
 		stmt = (Statement) conn.createStatement();
 		stmt.executeQuery("USE " + database);
-		System.out.println("INSERT INTO users VALUES (\"" + userId + "\","+ 
-				"\"" + hashedPW +"\"," + "\"" + "no" +"\")" + ";");
 		stmt.executeUpdate("INSERT INTO users VALUES (\"" + userId + "\","+ 
 				"\"" + hashedPW +"\"," + "\"" + "no" +"\")" + ";");
 		
+	}
+	
+	public void promoteUserToAd() throws SQLException{
+		Statement stmt = null;
+		stmt = (Statement) conn.createStatement();
+		stmt.executeQuery("USE " + database);
+		System.out.println("UPDATE users set administrator = \"yes\" "
+				+ "WHERE userId = \"" + userId + "\"");
+		stmt.executeUpdate("UPDATE users set administrator = \"yes\" "
+				+ "WHERE userId = \"" + userId + "\"");
 	}
 
 }
