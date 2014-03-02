@@ -3,6 +3,7 @@ package quizmania;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,16 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class SignUp
+ * Servlet implementation class CreateUser
  */
-@WebServlet(description = "Try to create a new user with the user input", urlPatterns = { "/SignUp" })
-public class SignUp extends HttpServlet {
+@WebServlet(description = "Try to create a new user with the user input", urlPatterns = { "/CreateUser" })
+public class CreateUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SignUp() {
+    public CreateUser() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,19 +43,10 @@ public class SignUp extends HttpServlet {
 		String passwordOnce = request.getParameter("passwordOnce");
 		String passwordTwice = request.getParameter("passwordTwice");
 
-		out.println("<!DOCTYPE html>"); 
-		out.println("<head>"); 
-		out.println("<meta charset=\"UTF-8\" />"); 
-		out.println("<title>Login</title>"); 
-		out.println("</head>"); 
-		out.println("<body>"); 
-		out.println("<h1>The SignUp servlet has not been implemented. </h1>"); 
-		out.println("Username: " + username);
-		out.println("Password: " + passwordOnce + "<br>");
-		out.println("Password: " + passwordTwice + "<br>");
-		out.println("</body>"); 
-		out.println("</html>"); 
+		request.setAttribute("errorMessage", "Create User not implemented yet");
 		
+		RequestDispatcher dispatch = request.getRequestDispatcher("SignUpError.jsp");
+		dispatch.forward(request, response);
 		//TODO: Check if two passwords match each other. 
 		//If not, go to the wrong signup page, pass error message
 		
