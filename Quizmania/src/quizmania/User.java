@@ -72,7 +72,6 @@ public class User {
 		ResultSet rs;
 		stmt = (Statement) conn.createStatement();
 		stmt.executeQuery("USE " + database);
-		System.out.println("SELECT * FROM users WHERE userId = \"" + userId + "\";");
 		rs = stmt.executeQuery("SELECT * FROM users WHERE userId = \"" + userId + "\";");
 		if(rs.next()){
 			return true;
@@ -84,10 +83,19 @@ public class User {
 	
 	/**
 	 * Add userId and hashed password into database
+	 * @throws SQLException 
 	 */
-	private void addUserToDB(){
+	private void addUserToDB() throws SQLException{
 		// Write cod to connect database and add user to the database
 		System.out.println("Add user to Database!");
+		Statement stmt = null;
+		stmt = (Statement) conn.createStatement();
+		stmt.executeQuery("USE " + database);
+		System.out.println("INSERT INTO users VALUES (\"" + userId + "\","+ 
+				"\"" + hashedPW +"\"," + "\"" + "no" +"\")" + ";");
+		stmt.executeUpdate("INSERT INTO users VALUES (\"" + userId + "\","+ 
+				"\"" + hashedPW +"\"," + "\"" + "no" +"\")" + ";");
+		
 	}
 
 }
