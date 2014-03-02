@@ -3,6 +3,7 @@ package quizmania;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,7 +44,11 @@ public class Login extends HttpServlet {
 		
 		// TODO Consult the database whether username/password combination exists
 		// TODO If exists, redirect to profile.jsp
+//		RequestDispatcher dispatch = request.getRequestDispatcher("profile.jsp");
+//		dispatch.forward(request, response);
 		// TODO If not, redirect to the error page telling people to sign up
+//		RequestDispatcher dispatch = request.getRequestDispatcher("LoginError.html");
+//		dispatch.forward(request, response);
 		
 		out.println("<!DOCTYPE html>"); 
 		out.println("<head>"); 
