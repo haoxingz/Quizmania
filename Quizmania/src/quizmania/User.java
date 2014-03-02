@@ -1,6 +1,6 @@
 package quizmania;
 
-import java.security.MessageDigest;
+import java.security.*;
 import java.sql.*;
 
 
@@ -10,11 +10,11 @@ public class User {
 	private String hashedPW;
 	private Connection conn;
 	private String database = MyDBInfo.MYSQL_DATABASE_NAME;
+	private String salt;
 	
 	public User(String userId, String password) throws Exception{
 		this.userId = userId;
 		hashedPW = generateHashedPW(password);
-		//hashedPW = password;
 		conn = new AccessDB().getConnection();
 		if(!userExists()){
 			addUserToDB();
@@ -47,11 +47,14 @@ public class User {
 	 */
 	private String generateHashedPW(String password){
 		String hashResult = null;
+		byte[] saltByte =  generateSalt();
+		salt = saltByte.toString();
         if(password == null) return null;
 		
 		try{
 			MessageDigest digest = MessageDigest.getInstance("SHA");
 			digest.update(password.getBytes());
+	        digest.update(saltByte);
 			hashResult = hexToString(digest.digest());
 		}catch (Exception e) {
             e.printStackTrace();
@@ -61,6 +64,13 @@ public class User {
 	}
 	
 	// Write code to add salt into password
+	
+	private byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random.nextBytes(bytes);
+        return bytes;
+    }
 	
 	/**
 	 * Check if userId exists in the database
@@ -91,8 +101,14 @@ public class User {
 		Statement stmt = null;
 		stmt = (Statement) conn.createStatement();
 		stmt.executeQuery("USE " + database);
+		System.out.println("INSERT INTO users VALUES (\"" + userId + "\","+ 
+				"\"" + hashedPW +"\"," + 
+				"\"" + salt + "\"," +
+				"\""+ "no" +"\")" + ";");
 		stmt.executeUpdate("INSERT INTO users VALUES (\"" + userId + "\","+ 
-				"\"" + hashedPW +"\"," + "\"" + "no" +"\")" + ";");
+				"\"" + hashedPW +"\"," + 
+				"\"" + salt + "\"," +
+				"\""+ "no" +"\")" + ";");
 		
 	}
 	
@@ -100,8 +116,6 @@ public class User {
 		Statement stmt = null;
 		stmt = (Statement) conn.createStatement();
 		stmt.executeQuery("USE " + database);
-		System.out.println("UPDATE users set administrator = \"yes\" "
-				+ "WHERE userId = \"" + userId + "\"");
 		stmt.executeUpdate("UPDATE users set administrator = \"yes\" "
 				+ "WHERE userId = \"" + userId + "\"");
 	}
