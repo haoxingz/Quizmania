@@ -1,4 +1,4 @@
-package quizmania;
+package user;
 
 import java.security.*;
 import java.sql.*;

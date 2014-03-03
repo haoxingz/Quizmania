@@ -1,4 +1,4 @@
-package quizmania;
+package user;
 
 
 import static org.junit.Assert.*;
